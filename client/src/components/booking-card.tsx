@@ -1,7 +1,25 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User, BookOpen, Calendar, Clock } from "lucide-react";
+import { User, BookOpen, Calendar, Clock, Target, Wifi, Projector, Book, Tablet, MoreHorizontal } from "lucide-react";
 import type { Booking } from "@shared/schema";
+
+const resourceIcons: Record<string, React.ComponentType<any>> = {
+  internet: Wifi,
+  projetor: Projector,
+  livros: Book,
+  tablet: Tablet,
+  computadores: User,
+  outros: MoreHorizontal,
+};
+
+const resourceLabels: Record<string, string> = {
+  internet: "Internet",
+  projetor: "Projetor",
+  computadores: "Computadores",
+  livros: "Livros",
+  tablet: "Tablets",
+  outros: "Outros",
+};
 
 interface BookingCardProps {
   booking: Booking;
@@ -77,6 +95,32 @@ export function BookingCard({ booking, compact = false }: BookingCardProps) {
             </span>
           </div>
         </div>
+
+        {booking.objective && (
+          <div className="space-y-2 border-t pt-3">
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4 text-muted-foreground" data-testid="icon-objective-card" />
+              <span className="text-sm font-medium">Objetivo</span>
+            </div>
+            <p className="text-sm text-muted-foreground" data-testid="text-objective-card">
+              {booking.objective}
+            </p>
+          </div>
+        )}
+
+        {booking.resources && booking.resources.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {booking.resources.map((resource) => {
+              const Icon = resourceIcons[resource] || MoreHorizontal;
+              return (
+                <Badge key={resource} variant="outline" className="gap-1" data-testid={`badge-resource-${resource}`}>
+                  <Icon className="h-3 w-3" />
+                  <span>{resourceLabels[resource] || resource}</span>
+                </Badge>
+              );
+            })}
+          </div>
+        )}
 
         {booking.notes && (
           <p className="text-sm text-muted-foreground border-t pt-3" data-testid="text-notes-card">
