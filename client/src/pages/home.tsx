@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, Clock, BookOpen, User, Plus } from "lucide-react";
+import { Calendar, Clock, BookOpen, User, Plus, Settings } from "lucide-react";
+import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -61,14 +62,26 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <Button
-              onClick={() => setShowForm(!showForm)}
-              size="default"
-              data-testid="button-new-booking"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Novo Agendamento
-            </Button>
+            <div className="flex items-center gap-2">
+              <Link href="/admin">
+                <Button
+                  variant="outline"
+                  size="default"
+                  data-testid="button-admin"
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  Admin
+                </Button>
+              </Link>
+              <Button
+                onClick={() => setShowForm(!showForm)}
+                size="default"
+                data-testid="button-new-booking"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Novo Agendamento
+              </Button>
+            </div>
           </div>
         </div>
       </header>
