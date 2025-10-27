@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
@@ -62,6 +63,15 @@ const subjects = [
   "Ens. Religioso",
 ];
 
+const resources = [
+  { value: "internet", label: "Internet" },
+  { value: "projetor", label: "Projetor" },
+  { value: "computadores", label: "Computadores" },
+  { value: "livros", label: "Livros Didáticos" },
+  { value: "tablet", label: "Tablets" },
+  { value: "outros", label: "Outros" },
+];
+
 export function BookingForm({ onSuccess }: BookingFormProps) {
   const { toast } = useToast();
   
@@ -69,11 +79,15 @@ export function BookingForm({ onSuccess }: BookingFormProps) {
     resolver: zodResolver(insertBookingSchema),
     defaultValues: {
       professorName: "",
+      professorEmail: "",
+      professorPhone: "",
       subject: "",
       shift: undefined,
       dayOfWeek: undefined,
       startTime: "",
       duration: "1",
+      objective: "",
+      resources: [],
       notes: "",
     },
   });
@@ -152,6 +166,46 @@ export function BookingForm({ onSuccess }: BookingFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="professorEmail"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email do Professor</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="professor@escola.com"
+                    {...field}
+                    data-testid="input-professor-email"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="professorPhone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Telefone do Professor</FormLabel>
+                <FormControl>
+                  <Input
+                    type="tel"
+                    placeholder="(00) 00000-0000"
+                    {...field}
+                    data-testid="input-professor-phone"
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -292,6 +346,78 @@ export function BookingForm({ onSuccess }: BookingFormProps) {
 
         <FormField
           control={form.control}
+          name="objective"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Objetivo da Aula</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Descreva o objetivo da aula no laboratório..."
+                  className="resize-none"
+                  rows={3}
+                  {...field}
+                  data-testid="textarea-objective"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="resources"
+          render={() => (
+            <FormItem>
+              <div className="mb-4">
+                <FormLabel>Recursos Necessários</FormLabel>
+                <FormDescription>
+                  Selecione os recursos que serão utilizados na aula
+                </FormDescription>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {resources.map((resource) => (
+                  <FormField
+                    key={resource.value}
+                    control={form.control}
+                    name="resources"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={resource.value}
+                          className="flex flex-row items-start space-x-3 space-y-0"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(resource.value)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...field.value, resource.value])
+                                  : field.onChange(
+                                      field.value?.filter(
+                                        (value) => value !== resource.value
+                                      )
+                                    );
+                              }}
+                              data-testid={`checkbox-resource-${resource.value}`}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal cursor-pointer">
+                            {resource.label}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name="notes"
           render={({ field }) => (
             <FormItem>
@@ -300,6 +426,7 @@ export function BookingForm({ onSuccess }: BookingFormProps) {
                 <Textarea
                   placeholder="Informações adicionais sobre o agendamento..."
                   className="resize-none"
+                  rows={2}
                   {...field}
                   data-testid="textarea-notes"
                 />
