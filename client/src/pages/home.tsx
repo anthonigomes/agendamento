@@ -213,6 +213,11 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="mt-8 py-6 border-t text-center text-sm text-muted-foreground" data-testid="footer">
+        Sistema desenvolvido pelo Prof. Antonio Gomes
+      </footer>
     </div>
   );
 }

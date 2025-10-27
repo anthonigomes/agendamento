@@ -251,11 +251,11 @@ export default function AdminPage() {
                           </Button>
                           <Button
                             size="icon"
-                            variant="outline"
+                            variant="destructive"
                             onClick={() => handleDeleteClick(booking.id)}
                             data-testid={`button-delete-${booking.id}`}
                           >
-                            <Trash2 className="h-4 w-4 text-destructive" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </div>
@@ -375,11 +375,11 @@ export default function AdminPage() {
                             </Button>
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="destructive"
                               onClick={() => handleDeleteClick(booking.id)}
                               data-testid={`button-delete-${booking.id}`}
                             >
-                              <Trash2 className="h-4 w-4 text-destructive" />
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                         </TableCell>
@@ -423,6 +423,11 @@ export default function AdminPage() {
           onOpenChange={setEditDialogOpen}
         />
       )}
+
+      {/* Footer */}
+      <footer className="mt-8 pt-6 border-t text-center text-sm text-muted-foreground" data-testid="footer">
+        Sistema desenvolvido pelo Prof. Antonio Gomes
+      </footer>
     </div>
   );
 }
