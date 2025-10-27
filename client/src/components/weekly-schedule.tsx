@@ -113,7 +113,7 @@ export function WeeklySchedule({ shift, bookings, isLoading }: WeeklySchedulePro
                         data-testid={`cell-${day.value}-${time}`}
                       >
                         {booking ? (
-                          <div className="rounded-md border border-primary/20 bg-primary/5 p-2 sm:p-3 min-h-[70px] sm:min-h-[80px] space-y-1 sm:space-y-2" data-testid={`booking-${day.value}-${time}`}>
+                          <div className="rounded-md border border-primary/20 bg-primary/10 p-2 sm:p-3 min-h-[70px] sm:min-h-[80px] space-y-1 sm:space-y-2" data-testid={`booking-${day.value}-${time}`}>
                             <div className="flex items-start justify-between gap-1 sm:gap-2">
                               <div className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-medium min-w-0">
                                 <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground flex-shrink-0" data-testid="icon-professor" />
