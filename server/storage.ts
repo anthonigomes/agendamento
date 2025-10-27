@@ -12,6 +12,8 @@ export interface IStorage {
   createBooking(booking: InsertBooking): Promise<Booking>;
   getBookings(): Promise<Booking[]>;
   getBookingsByShift(shift: string): Promise<Booking[]>;
+  updateBooking(id: string, booking: InsertBooking): Promise<Booking | null>;
+  deleteBooking(id: string): Promise<boolean>;
 }
 
 export class GoogleSheetsStorage implements IStorage {
@@ -162,6 +164,120 @@ export class GoogleSheetsStorage implements IStorage {
   async getBookingsByShift(shift: string): Promise<Booking[]> {
     const allBookings = await this.getBookings();
     return allBookings.filter(booking => booking.shift === shift);
+  }
+
+  async updateBooking(id: string, insertBooking: InsertBooking): Promise<Booking | null> {
+    try {
+      const spreadsheetId = await this.ensureSpreadsheet();
+      const sheets = await getUncachableGoogleSheetClient();
+      
+      // Get all rows to find the one to update
+      const response = await sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: 'Agendamentos!A2:M',
+      });
+
+      const rows = response.data.values || [];
+      const rowIndex = rows.findIndex(row => row[0] === id);
+      
+      if (rowIndex === -1) {
+        return null; // Booking not found
+      }
+
+      // Actual row number in sheet (header is row 1, data starts at row 2)
+      const sheetRowNumber = rowIndex + 2;
+      
+      const booking: Booking = {
+        ...insertBooking,
+        id,
+        createdAt: rows[rowIndex][12] ? new Date(rows[rowIndex][12]) : new Date(),
+        notes: insertBooking.notes || null,
+      };
+
+      // Update the row
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: `Agendamentos!A${sheetRowNumber}:M${sheetRowNumber}`,
+        valueInputOption: 'RAW',
+        requestBody: {
+          values: [[
+            booking.id,
+            booking.professorName,
+            booking.professorEmail,
+            booking.professorPhone,
+            booking.subject,
+            booking.shift,
+            booking.dayOfWeek,
+            booking.startTime,
+            booking.duration,
+            booking.objective,
+            booking.resources.join(', '),
+            booking.notes || '',
+            booking.createdAt.toISOString(),
+          ]]
+        }
+      });
+
+      return booking;
+    } catch (error) {
+      console.error('Error updating booking:', error);
+      return null;
+    }
+  }
+
+  async deleteBooking(id: string): Promise<boolean> {
+    try {
+      const spreadsheetId = await this.ensureSpreadsheet();
+      const sheets = await getUncachableGoogleSheetClient();
+      
+      // Get all rows to find the one to delete
+      const response = await sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: 'Agendamentos!A2:M',
+      });
+
+      const rows = response.data.values || [];
+      const rowIndex = rows.findIndex(row => row[0] === id);
+      
+      if (rowIndex === -1) {
+        return false; // Booking not found
+      }
+
+      // Actual row number in sheet (header is row 1, data starts at row 2)
+      const sheetRowNumber = rowIndex + 2;
+      
+      // Get the sheet ID
+      const spreadsheetData = await sheets.spreadsheets.get({
+        spreadsheetId,
+      });
+      
+      const sheet = spreadsheetData.data.sheets?.[0];
+      if (!sheet?.properties?.sheetId) {
+        return false;
+      }
+
+      // Delete the row
+      await sheets.spreadsheets.batchUpdate({
+        spreadsheetId,
+        requestBody: {
+          requests: [{
+            deleteDimension: {
+              range: {
+                sheetId: sheet.properties.sheetId,
+                dimension: 'ROWS',
+                startIndex: sheetRowNumber - 1, // 0-indexed
+                endIndex: sheetRowNumber, // exclusive
+              }
+            }
+          }]
+        }
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+      return false;
+    }
   }
 }
 
