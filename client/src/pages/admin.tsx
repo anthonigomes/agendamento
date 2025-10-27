@@ -133,18 +133,18 @@ export default function AdminPage() {
     .slice(0, 5);
 
   return (
-    <div className="container mx-auto p-4 space-y-6" data-testid="admin-page">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold" data-testid="page-title">Painel Administrativo</h1>
-          <p className="text-muted-foreground mt-1" data-testid="page-description">
-            Gerencie todos os agendamentos do laboratório
+    <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6" data-testid="admin-page">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold truncate" data-testid="page-title">Painel Administrativo</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1" data-testid="page-description">
+            Gerencie todos os agendamentos
           </p>
         </div>
         <Link href="/">
-          <Button variant="outline" data-testid="button-back-home">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar
+          <Button variant="outline" data-testid="button-back-home" className="w-full sm:w-auto">
+            <ArrowLeft className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Voltar</span>
           </Button>
         </Link>
       </div>
@@ -229,63 +229,20 @@ export default function AdminPage() {
               Nenhum agendamento encontrado
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Professor</TableHead>
-                    <TableHead>Disciplina</TableHead>
-                    <TableHead>Turno</TableHead>
-                    <TableHead>Dia</TableHead>
-                    <TableHead>Horário</TableHead>
-                    <TableHead>Duração</TableHead>
-                    <TableHead>Objetivo</TableHead>
-                    <TableHead>Recursos</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {bookings.map((booking) => (
-                    <TableRow key={booking.id} data-testid={`row-booking-${booking.id}`}>
-                      <TableCell className="font-medium" data-testid="cell-professor">
-                        {booking.professorName}
-                      </TableCell>
-                      <TableCell data-testid="cell-subject">{booking.subject}</TableCell>
-                      <TableCell data-testid="cell-shift">
-                        <Badge variant="outline">{shiftLabels[booking.shift]}</Badge>
-                      </TableCell>
-                      <TableCell data-testid="cell-day">{dayLabels[booking.dayOfWeek]}</TableCell>
-                      <TableCell data-testid="cell-time">{booking.startTime}</TableCell>
-                      <TableCell data-testid="cell-duration">
-                        {booking.duration === "1" ? "1 aula" : "2 aulas"}
-                      </TableCell>
-                      <TableCell className="max-w-[200px]" data-testid="cell-objective">
-                        <div className="truncate text-sm text-muted-foreground">
-                          {booking.objective}
+            <>
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-4">
+                {bookings.map((booking) => (
+                  <Card key={booking.id} className="p-4" data-testid={`card-booking-${booking.id}`}>
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-medium truncate">{booking.professorName}</h3>
+                          <p className="text-sm text-muted-foreground">{booking.subject}</p>
                         </div>
-                      </TableCell>
-                      <TableCell data-testid="cell-resources">
-                        <div className="flex flex-wrap gap-1">
-                          {booking.resources.slice(0, 2).map((resource) => {
-                            const Icon = resourceIcons[resource] || MoreHorizontal;
-                            return (
-                              <Badge key={resource} variant="secondary" className="gap-1 text-xs">
-                                <Icon className="h-2.5 w-2.5" />
-                                <span className="sr-only">{resourceLabels[resource]}</span>
-                              </Badge>
-                            );
-                          })}
-                          {booking.resources.length > 2 && (
-                            <Badge variant="secondary" className="text-xs">
-                              +{booking.resources.length - 2}
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
+                        <div className="flex gap-2 flex-shrink-0">
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="outline"
                             onClick={() => handleEditClick(booking)}
                             data-testid={`button-edit-${booking.id}`}
@@ -293,7 +250,7 @@ export default function AdminPage() {
                             <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="outline"
                             onClick={() => handleDeleteClick(booking.id)}
                             data-testid={`button-delete-${booking.id}`}
@@ -301,12 +258,137 @@ export default function AdminPage() {
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
                         </div>
-                      </TableCell>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Turno:</span>
+                          <div className="mt-1">
+                            <Badge variant="outline">{shiftLabels[booking.shift]}</Badge>
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Dia:</span>
+                          <p className="mt-1 font-medium">{dayLabels[booking.dayOfWeek]}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Horário:</span>
+                          <p className="mt-1 font-medium">{booking.startTime}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Duração:</span>
+                          <p className="mt-1 font-medium">
+                            {booking.duration === "1" ? "1 aula" : "2 aulas"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <span className="text-sm text-muted-foreground">Objetivo:</span>
+                        <p className="text-sm mt-1 line-clamp-2">{booking.objective}</p>
+                      </div>
+
+                      {booking.resources.length > 0 && (
+                        <div>
+                          <span className="text-sm text-muted-foreground">Recursos:</span>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {booking.resources.map((resource) => {
+                              const Icon = resourceIcons[resource] || MoreHorizontal;
+                              return (
+                                <Badge key={resource} variant="secondary" className="gap-1 text-xs">
+                                  <Icon className="h-3 w-3" />
+                                  <span>{resourceLabels[resource]}</span>
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Professor</TableHead>
+                      <TableHead>Disciplina</TableHead>
+                      <TableHead>Turno</TableHead>
+                      <TableHead>Dia</TableHead>
+                      <TableHead>Horário</TableHead>
+                      <TableHead>Duração</TableHead>
+                      <TableHead>Objetivo</TableHead>
+                      <TableHead>Recursos</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {bookings.map((booking) => (
+                      <TableRow key={booking.id} data-testid={`row-booking-${booking.id}`}>
+                        <TableCell className="font-medium" data-testid="cell-professor">
+                          {booking.professorName}
+                        </TableCell>
+                        <TableCell data-testid="cell-subject">{booking.subject}</TableCell>
+                        <TableCell data-testid="cell-shift">
+                          <Badge variant="outline">{shiftLabels[booking.shift]}</Badge>
+                        </TableCell>
+                        <TableCell data-testid="cell-day">{dayLabels[booking.dayOfWeek]}</TableCell>
+                        <TableCell data-testid="cell-time">{booking.startTime}</TableCell>
+                        <TableCell data-testid="cell-duration">
+                          {booking.duration === "1" ? "1 aula" : "2 aulas"}
+                        </TableCell>
+                        <TableCell className="max-w-[200px]" data-testid="cell-objective">
+                          <div className="truncate text-sm text-muted-foreground">
+                            {booking.objective}
+                          </div>
+                        </TableCell>
+                        <TableCell data-testid="cell-resources">
+                          <div className="flex flex-wrap gap-1">
+                            {booking.resources.slice(0, 2).map((resource) => {
+                              const Icon = resourceIcons[resource] || MoreHorizontal;
+                              return (
+                                <Badge key={resource} variant="secondary" className="gap-1 text-xs">
+                                  <Icon className="h-2.5 w-2.5" />
+                                  <span className="sr-only">{resourceLabels[resource]}</span>
+                                </Badge>
+                              );
+                            })}
+                            {booking.resources.length > 2 && (
+                              <Badge variant="secondary" className="text-xs">
+                                +{booking.resources.length - 2}
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEditClick(booking)}
+                              data-testid={`button-edit-${booking.id}`}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDeleteClick(booking.id)}
+                              data-testid={`button-delete-${booking.id}`}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
