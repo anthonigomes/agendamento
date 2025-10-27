@@ -20,20 +20,44 @@ const daysOfWeek = [
 
 const timeSlots = {
   manha: ["07:30", "08:20", "09:10", "10:00"],
-  tarde: ["13:00", "13:50", "14:40", "15:30"],
-  noite: ["18:00", "18:50", "19:40", "20:30"],
+  tarde: ["13:00", "14:00", "15:15", "16:15"],
+  noite: ["18:50", "19:40", "20:45", "21:35"],
 };
 
 export function WeeklySchedule({ shift, bookings, isLoading }: WeeklyScheduleProps) {
   const slots = timeSlots[shift];
 
   const getBookingForSlot = (day: string, time: string) => {
-    return bookings.find(
+    // Check if there's a booking that starts at this time
+    const directBooking = bookings.find(
       (booking) =>
         booking.shift === shift &&
         booking.dayOfWeek === day &&
         booking.startTime === time
     );
+    
+    if (directBooking) {
+      return directBooking;
+    }
+    
+    // Check if there's a booking with 2 classes that started in the previous slot
+    const currentSlotIndex = slots.indexOf(time);
+    if (currentSlotIndex > 0) {
+      const previousTime = slots[currentSlotIndex - 1];
+      const previousBooking = bookings.find(
+        (booking) =>
+          booking.shift === shift &&
+          booking.dayOfWeek === day &&
+          booking.startTime === previousTime &&
+          booking.duration === "2"
+      );
+      
+      if (previousBooking) {
+        return previousBooking;
+      }
+    }
+    
+    return undefined;
   };
 
   if (isLoading) {

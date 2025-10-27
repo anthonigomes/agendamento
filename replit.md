@@ -88,7 +88,7 @@ O sistema previne conflitos automaticamente:
 
 ## Desenvolvimento Recente
 
-**Data**: Outubro 2025
+**Data**: Outubro 27, 2025
 
 **Implementações**:
 1. ✅ Schema completo de dados com validação
@@ -96,8 +96,13 @@ O sistema previne conflitos automaticamente:
 3. ✅ Integração Google Sheets funcionando
 4. ✅ API REST com validação de conflitos
 5. ✅ Testes end-to-end completos
+6. ✅ **Horários ajustados conforme grade da escola**:
+   - Turno Tarde: 13:00, 14:00, 15:15, 16:15
+   - Turno Noite: 18:50, 19:40, 20:45, 21:35
+7. ✅ **9 Disciplinas do Ensino Fundamental 2** (dropdown): Matemática, Português, Ciências, História, Geografia, Arte, Inglês, Ed. Física, Ens. Religioso
+8. ✅ **Visualização corrigida**: Agendamentos de 2 aulas agora ocupam visualmente ambos os horários na grade
 
-**Status**: MVP completo e testado, pronto para uso!
+**Status**: Sistema completo, testado e ajustado com os horários exatos da escola! Pronto para uso pelos professores! 🎓
 
 ## Próximos Passos Sugeridos
 
