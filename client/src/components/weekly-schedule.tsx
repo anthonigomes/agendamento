@@ -81,7 +81,7 @@ export function WeeklySchedule({ shift, bookings, isLoading }: WeeklySchedulePro
               <tr>
                 <th
                   scope="col"
-                  className="sticky left-0 z-10 bg-muted/50 px-4 py-3 text-left text-sm font-medium"
+                  className="sticky left-0 z-10 bg-muted/50 px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium"
                   data-testid="header-time"
                 >
                   Horário
@@ -90,7 +90,7 @@ export function WeeklySchedule({ shift, bookings, isLoading }: WeeklySchedulePro
                   <th
                     key={day.value}
                     scope="col"
-                    className="px-4 py-3 text-center text-sm font-medium"
+                    className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-medium"
                     data-testid={`header-${day.value}`}
                   >
                     {day.label}
@@ -101,7 +101,7 @@ export function WeeklySchedule({ shift, bookings, isLoading }: WeeklySchedulePro
             <tbody className="divide-y divide-border bg-card">
               {slots.map((time) => (
                 <tr key={time} className="hover-elevate" data-testid={`row-${time}`}>
-                  <td className="sticky left-0 z-10 bg-card whitespace-nowrap px-4 py-3 text-sm font-medium" data-testid={`time-${time}`}>
+                  <td className="sticky left-0 z-10 bg-card whitespace-nowrap px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium" data-testid={`time-${time}`}>
                     {time}
                   </td>
                   {daysOfWeek.map((day) => {
@@ -109,30 +109,31 @@ export function WeeklySchedule({ shift, bookings, isLoading }: WeeklySchedulePro
                     return (
                       <td
                         key={`${day.value}-${time}`}
-                        className="px-2 py-2"
+                        className="px-1 sm:px-2 py-1 sm:py-2"
                         data-testid={`cell-${day.value}-${time}`}
                       >
                         {booking ? (
-                          <div className="rounded-md border border-primary/20 bg-primary/5 p-3 min-h-[80px] space-y-2" data-testid={`booking-${day.value}-${time}`}>
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex items-center gap-1.5 text-sm font-medium">
-                                <User className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" data-testid="icon-professor" />
-                                <span className="line-clamp-1" data-testid="text-professor-name">{booking.professorName}</span>
+                          <div className="rounded-md border border-primary/20 bg-primary/5 p-2 sm:p-3 min-h-[70px] sm:min-h-[80px] space-y-1 sm:space-y-2" data-testid={`booking-${day.value}-${time}`}>
+                            <div className="flex items-start justify-between gap-1 sm:gap-2">
+                              <div className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-medium min-w-0">
+                                <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground flex-shrink-0" data-testid="icon-professor" />
+                                <span className="line-clamp-1 truncate" data-testid="text-professor-name">{booking.professorName}</span>
                               </div>
-                              <Badge variant="secondary" className="text-xs flex-shrink-0" data-testid="badge-duration">
-                                {booking.duration === "1" ? "1 aula" : "2 aulas"}
+                              <Badge variant="secondary" className="text-[10px] sm:text-xs flex-shrink-0 px-1 sm:px-2" data-testid="badge-duration">
+                                {booking.duration === "1" ? "1" : "2"}
                               </Badge>
                             </div>
-                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                              <BookOpen className="h-3 w-3 flex-shrink-0" data-testid="icon-subject" />
-                              <span className="line-clamp-1" data-testid="text-subject">{booking.subject}</span>
+                            <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-muted-foreground min-w-0">
+                              <BookOpen className="h-2.5 w-2.5 sm:h-3 sm:w-3 flex-shrink-0" data-testid="icon-subject" />
+                              <span className="line-clamp-1 truncate" data-testid="text-subject">{booking.subject}</span>
                             </div>
                           </div>
                         ) : (
-                          <div className="rounded-md border border-dashed border-border/50 bg-muted/20 p-3 min-h-[80px] flex items-center justify-center" data-testid={`available-${day.value}-${time}`}>
-                            <span className="text-xs text-muted-foreground" data-testid="text-available">
+                          <div className="rounded-md border border-dashed border-border/50 bg-muted/20 p-2 sm:p-3 min-h-[70px] sm:min-h-[80px] flex items-center justify-center" data-testid={`available-${day.value}-${time}`}>
+                            <span className="text-[10px] sm:text-xs text-muted-foreground hidden sm:inline" data-testid="text-available">
                               Disponível
                             </span>
+                            <span className="text-[10px] text-muted-foreground sm:hidden">-</span>
                           </div>
                         )}
                       </td>
