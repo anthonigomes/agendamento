@@ -61,11 +61,15 @@ export class GoogleSheetsStorage implements IStorage {
               values: [
                 { userEnteredValue: { stringValue: 'ID' } },
                 { userEnteredValue: { stringValue: 'Professor' } },
+                { userEnteredValue: { stringValue: 'Email' } },
+                { userEnteredValue: { stringValue: 'Telefone' } },
                 { userEnteredValue: { stringValue: 'Disciplina' } },
                 { userEnteredValue: { stringValue: 'Turno' } },
                 { userEnteredValue: { stringValue: 'Dia da Semana' } },
                 { userEnteredValue: { stringValue: 'Horário' } },
                 { userEnteredValue: { stringValue: 'Duração (aulas)' } },
+                { userEnteredValue: { stringValue: 'Objetivo da Aula' } },
+                { userEnteredValue: { stringValue: 'Recursos' } },
                 { userEnteredValue: { stringValue: 'Observações' } },
                 { userEnteredValue: { stringValue: 'Data de Criação' } },
               ]
@@ -98,17 +102,21 @@ export class GoogleSheetsStorage implements IStorage {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: 'Agendamentos!A:I',
+      range: 'Agendamentos!A:M',
       valueInputOption: 'RAW',
       requestBody: {
         values: [[
           booking.id,
           booking.professorName,
+          booking.professorEmail,
+          booking.professorPhone,
           booking.subject,
           booking.shift,
           booking.dayOfWeek,
           booking.startTime,
           booking.duration,
+          booking.objective,
+          booking.resources.join(', '),
           booking.notes || '',
           booking.createdAt.toISOString(),
         ]]
@@ -125,7 +133,7 @@ export class GoogleSheetsStorage implements IStorage {
       
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Agendamentos!A2:I',
+        range: 'Agendamentos!A2:M',
       });
 
       const rows = response.data.values || [];
@@ -133,13 +141,17 @@ export class GoogleSheetsStorage implements IStorage {
       return rows.map(row => ({
         id: row[0],
         professorName: row[1],
-        subject: row[2],
-        shift: row[3],
-        dayOfWeek: row[4],
-        startTime: row[5],
-        duration: row[6],
-        notes: row[7] || null,
-        createdAt: row[8] ? new Date(row[8]) : null,
+        professorEmail: row[2],
+        professorPhone: row[3],
+        subject: row[4],
+        shift: row[5],
+        dayOfWeek: row[6],
+        startTime: row[7],
+        duration: row[8],
+        objective: row[9],
+        resources: row[10] ? row[10].split(', ') : [],
+        notes: row[11] || null,
+        createdAt: row[12] ? new Date(row[12]) : null,
       }));
     } catch (error) {
       console.error('Error fetching bookings:', error);
