@@ -164,7 +164,11 @@ O sistema previne conflitos automaticamente:
 - **Gratuito**: Sistema 100% gratuito usando Google Sheets como banco de dados
 - **Acesso**: Todos que acessarem o link podem criar agendamentos
 - **Persistência**: Dados salvos em tempo real no Google Sheets
-- **Responsivo**: Funciona em desktop, tablet e celular
+- **Totalmente Responsivo**: 
+  - 📱 **Celular (Mobile)**: Interface otimizada com botões compactos, cards empilháveis, fonte reduzida e grade com scroll horizontal
+  - 📱 **Tablet**: Layout intermediário com 2 colunas de estatísticas e elementos de tamanho médio
+  - 💻 **Desktop/PC**: Layout completo com 4 colunas de estatísticas, tabelas horizontais e sidebar lateral
+  - ✅ Testado em iPhone 12 (390x844), iPad (768x1024) e Desktop (1920x1080)
 
 ## Contato e Suporte
 
