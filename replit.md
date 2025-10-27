@@ -77,7 +77,12 @@ Sistema web completo para agendamento do laboratório de informática escolar, c
    - Planilha com 13 colunas incluindo informações de contato, objetivo da aula e recursos necessários
    - Edições e exclusões são refletidas instantaneamente no Google Sheets
 
-**Nota**: O painel administrativo é público (sem login) para manter o sistema 100% gratuito. Ideal para ambiente escolar de confiança.
+**Nota sobre Segurança - ATUALIZADO**: O painel administrativo agora possui **autenticação com senha**! 
+- **Professores**: Podem criar agendamentos livremente (sem login)
+- **Administradores**: Precisam fazer login com senha para editar/excluir agendamentos
+- **Acesso**: /admin redireciona para /admin/login automaticamente
+- **Senha**: Configurada via ADMIN_PASSWORD (Replit Secrets)
+- **Sessão**: Permanece logado por 7 dias
 
 ## Estrutura Técnica
 
@@ -153,6 +158,14 @@ O sistema previne conflitos automaticamente:
 16. ✅ **Botões Destrutivos**: Botões de exclusão agora usam `variant="destructive"` (vermelho) em vez de outline, sinalizando claramente ação perigosa
 17. ✅ **Rodapé com Crédito**: Footer em todas as páginas com "Sistema desenvolvido pelo Prof. Antonio Gomes"
 18. ✅ **Validação de Acessibilidade**: Confirmado contraste WCAG 6.5:1, cores apropriadas para ambiente escolar
+
+**Sistema de Autenticação - 27 Out 2025**:
+19. ✅ **Login Administrativo**: Página /admin/login com autenticação por senha
+20. ✅ **Proteção de Rotas**: Middleware `requireAdmin` protege edição e exclusão de agendamentos
+21. ✅ **Sessão Persistente**: express-session com cookie de 7 dias (httpOnly, secure em produção)
+22. ✅ **Botão Logout**: Opção "Sair" no painel admin para desconectar
+23. ✅ **Separação de Acesso**: Professores criam agendamentos sem login, apenas admin pode editar/excluir
+24. ✅ **100% Gratuito**: Sistema continua gratuito, usando memorystore para sessões
 
 ## Próximos Passos Sugeridos
 
