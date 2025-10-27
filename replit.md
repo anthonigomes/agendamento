@@ -52,9 +52,32 @@ Sistema web completo para agendamento do laboratório de informática escolar, c
 
 ### Para Administradores
 
-- **Planilha do Google Sheets**: Na primeira execução, o sistema cria automaticamente uma planilha chamada "Agendamentos - Laboratório de Informática" na conta Google conectada
-- **Acesso aos Dados**: Todos os agendamentos são salvos em tempo real na planilha
-- **Organização**: Planilha com 13 colunas incluindo informações de contato, objetivo da aula e recursos necessários
+1. **Acessar Painel Administrativo**:
+   - Clique no botão "Admin" no cabeçalho da página principal
+   - Você será direcionado para /admin
+
+2. **Visualizar Estatísticas**:
+   - **Total de Agendamentos**: Veja o número total de reservas
+   - **Por Turno**: Quantidade de agendamentos em cada turno (Manhã/Tarde/Noite)
+   - **Top Professores**: Professores com mais agendamentos
+   - **Top Disciplinas**: Disciplinas mais agendadas
+
+3. **Gerenciar Agendamentos**:
+   - **Visualizar Todos**: Tabela com todos os agendamentos do sistema
+   - **Editar**: Clique no ícone de lápis para modificar qualquer agendamento
+     - Altere qualquer um dos 13 campos (professor, disciplina, turno, dia, horário, etc.)
+     - Sistema valida conflitos automaticamente
+   - **Excluir**: Clique no ícone de lixeira para deletar um agendamento
+     - Confirmação obrigatória antes da exclusão
+   - **Voltar**: Botão "Voltar" retorna à página principal
+
+4. **Planilha do Google Sheets**:
+   - Na primeira execução, o sistema cria automaticamente uma planilha chamada "Agendamentos - Laboratório de Informática"
+   - Todos os agendamentos são salvos em tempo real na planilha
+   - Planilha com 13 colunas incluindo informações de contato, objetivo da aula e recursos necessários
+   - Edições e exclusões são refletidas instantaneamente no Google Sheets
+
+**Nota**: O painel administrativo é público (sem login) para manter o sistema 100% gratuito. Ideal para ambiente escolar de confiança.
 
 ## Estrutura Técnica
 
@@ -114,8 +137,16 @@ O sistema previne conflitos automaticamente:
 11. ✅ **Recursos necessários**: Seleção de equipamentos (Internet, Projetor, Computadores, Livros, Tablets, Outros)
 12. ✅ **Cards aprimorados**: Exibem objetivo com ícone de alvo e recursos com badges e ícones apropriados
 13. ✅ **Google Sheets ampliado**: Agora persiste 13 colunas de dados por agendamento
+14. ✅ **Painel Administrativo Completo** (novo!):
+   - Página /admin acessível via botão "Admin" no cabeçalho
+   - Estatísticas em tempo real (total de agendamentos, por turno, top professores, top disciplinas)
+   - Tabela completa com todos os agendamentos
+   - Edição de agendamentos com formulário completo (todos os 13 campos)
+   - Exclusão de agendamentos com confirmação
+   - Validação de conflitos ao editar
+   - 100% gratuito (sem sistema de login/autenticação)
 
-**Status**: Sistema completo com coleta abrangente de informações! Pronto para uso pelos professores com todos os detalhes necessários! 🎓📚
+**Status**: Sistema completo com gerenciamento administrativo integrado! Professores podem criar agendamentos e administradores podem gerenciar tudo através da página /admin! 🎓📚✨
 
 ## Próximos Passos Sugeridos
 
