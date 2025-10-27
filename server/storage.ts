@@ -93,6 +93,7 @@ export class GoogleSheetsStorage implements IStorage {
       ...insertBooking,
       id,
       createdAt,
+      notes: insertBooking.notes || null,
     };
 
     await sheets.spreadsheets.values.append({
@@ -138,7 +139,7 @@ export class GoogleSheetsStorage implements IStorage {
         startTime: row[5],
         duration: row[6],
         notes: row[7] || null,
-        createdAt: new Date(row[8]),
+        createdAt: row[8] ? new Date(row[8]) : null,
       }));
     } catch (error) {
       console.error('Error fetching bookings:', error);

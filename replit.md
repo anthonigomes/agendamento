@@ -1,84 +1,126 @@
-# Laboratory Computer Room Scheduling System
+# Sistema de Agendamento - Laboratório de Informática
 
-## Overview
+## Visão Geral
+Sistema web completo para agendamento do laboratório de informática escolar, com integração ao Google Sheets para armazenamento gratuito de dados.
 
-This is an educational scheduling application for managing computer laboratory bookings in a school environment. The system allows teachers to book time slots across three daily shifts (morning, afternoon, and evening) throughout the work week. Built with a modern React frontend and Express backend, it emphasizes clarity, efficiency, and ease of use for busy educators.
+## Características Principais
 
-## User Preferences
+### ✨ Funcionalidades
+- **Agendamento Intuitivo**: Formulário simples para criar reservas do laboratório
+- **Visualização Semanal**: Grade visual mostrando disponibilidade por dia e horário
+- **Três Turnos**: Manhã (7h-12h), Tarde (13h-18h), Noite (18h-22h)
+- **Prevenção de Conflitos**: Sistema automático que impede dupla reserva do mesmo horário
+- **Duração Flexível**: Escolha entre 1 ou 2 aulas simultâneas
+- **Estatísticas em Tempo Real**: Acompanhe total de agendamentos e reservas do dia
+- **Integração Google Sheets**: Dados salvos automaticamente em planilha do Google
 
-Preferred communication style: Simple, everyday language.
+### 🎨 Design
+- Interface moderna e responsiva
+- Modo claro e escuro (tema adaptável)
+- Componentes profissionais usando shadcn/ui
+- Tipografia Roboto seguindo Material Design
+- Feedback visual com notificações toast
+- Estados de loading e erro elegantes
 
-## System Architecture
+## Como Usar
 
-### Frontend Architecture
+### Para Professores
 
-**Framework**: React 18 with TypeScript, built using Vite for fast development and optimized production builds.
+1. **Criar um Agendamento**:
+   - Clique no botão "Novo Agendamento"
+   - Preencha seu nome e a disciplina
+   - Selecione o turno desejado (Manhã/Tarde/Noite)
+   - Escolha o dia da semana
+   - Selecione o horário de início
+   - Indique se utilizará 1 ou 2 aulas
+   - Adicione observações se necessário
+   - Clique em "Criar Agendamento"
 
-**UI Component System**: shadcn/ui components (Radix UI primitives) following the "New York" style variant. This provides accessible, customizable components built on top of Radix UI primitives with Tailwind CSS for styling.
+2. **Visualizar Agenda**:
+   - Use as abas (Manhã/Tarde/Noite) para alternar entre turnos
+   - A grade semanal mostra todos os horários disponíveis
+   - Células verdes indicam horários ocupados
+   - Células com borda tracejada estão disponíveis
 
-**Design Philosophy**: Material Design principles adapted for educational contexts, prioritizing clarity, efficiency, and trustworthiness. Typography uses Roboto font family for consistency with the Google ecosystem.
+3. **Verificar Estatísticas**:
+   - Veja o total de agendamentos no painel lateral
+   - Confira quantos agendamentos existem para hoje
+   - Liste os agendamentos recentes do turno selecionado
 
-**State Management**: 
-- TanStack Query (React Query) for server state management and caching
-- React Hook Form with Zod validation for form state
-- Local React state for UI interactions
+### Para Administradores
 
-**Routing**: Wouter for lightweight client-side routing (currently single-page application with home route).
+- **Planilha do Google Sheets**: Na primeira execução, o sistema cria automaticamente uma planilha chamada "Agendamentos - Laboratório de Informática" na conta Google conectada
+- **Acesso aos Dados**: Todos os agendamentos são salvos em tempo real na planilha
+- **Organização**: Dados incluem professor, disciplina, turno, dia, horário, duração e observações
 
-**Styling System**: Tailwind CSS with custom design tokens using CSS variables for theming. Supports light/dark mode through a custom theme provider. Design tokens include semantic color system (primary, secondary, destructive, muted, accent) with HSL values for alpha transparency support.
+## Estrutura Técnica
 
-### Backend Architecture
+### Frontend
+- React 18 com TypeScript
+- Tailwind CSS + shadcn/ui
+- React Query para gerenciamento de estado
+- Wouter para roteamento
 
-**Server Framework**: Express.js running on Node.js with TypeScript, using ES modules.
+### Backend
+- Express.js
+- Google Sheets API (via integração Replit)
+- Validação com Zod
+- Armazenamento em Google Sheets
 
-**API Design**: RESTful endpoints under `/api` namespace:
-- `POST /api/bookings` - Create new booking with conflict detection
-- `GET /api/bookings` - Retrieve all bookings
+### Dados Armazenados
+Cada agendamento contém:
+- Nome do Professor
+- Disciplina
+- Turno (manhã/tarde/noite)
+- Dia da Semana (segunda a sexta)
+- Horário de Início
+- Duração (1 ou 2 aulas)
+- Observações (opcional)
+- Data de Criação
 
-**Validation**: Zod schemas shared between frontend and backend for type-safe validation. Server-side validation includes business logic for detecting time slot conflicts (overlapping bookings within same shift/day).
+## Validações de Conflito
 
-**Request Processing**: Express middleware for JSON parsing, raw body capture, and request/response logging.
+O sistema previne conflitos automaticamente:
+- ✅ Detecta se um horário já está ocupado
+- ✅ Considera duração de 2 aulas (~100 minutos)
+- ✅ Verifica sobreposição de horários
+- ✅ Mostra mensagem de erro clara ao usuário
 
-**Development Server**: Vite dev server integrated with Express in middleware mode for HMR (Hot Module Replacement) during development.
+## Desenvolvimento Recente
 
-### Data Storage Solutions
+**Data**: Outubro 2025
 
-**Primary Storage**: Google Sheets integration via Google Sheets API v4 and OAuth2 authentication. The system creates and manages a spreadsheet for storing booking data.
+**Implementações**:
+1. ✅ Schema completo de dados com validação
+2. ✅ Interface frontend profissional e responsiva
+3. ✅ Integração Google Sheets funcionando
+4. ✅ API REST com validação de conflitos
+5. ✅ Testes end-to-end completos
 
-**Authentication Flow**: Uses Replit Connectors system for managing Google OAuth credentials, with automatic token refresh handling.
+**Status**: MVP completo e testado, pronto para uso!
 
-**Database Schema** (defined for potential PostgreSQL migration):
-- **bookings** table: Stores professor name, subject, shift (morning/afternoon/evening), day of week, start time, duration (1-2 class periods), optional notes, timestamps
-- **users** table: Basic username/password structure (currently unused, template remnant)
+## Próximos Passos Sugeridos
 
-**ORM**: Drizzle ORM configured for PostgreSQL with schema definitions and migration support, though currently using Google Sheets as the active storage backend.
+### Melhorias Futuras
+- [ ] Notificações por email para confirmação de agendamentos
+- [ ] Sistema de cancelamento e reagendamento
+- [ ] Relatórios de uso por professor e disciplina
+- [ ] Agendamentos recorrentes (semanais)
+- [ ] Sistema de permissões para coordenadores
+- [ ] Exportação de dados em PDF
+- [ ] Integração com calendário Google
 
-### Authentication and Authorization
+## Notas Importantes
 
-Currently no authentication system is implemented. The users table exists in the schema but is not actively used. The application is designed for internal school use where access control may be handled at the network level.
+- **Gratuito**: Sistema 100% gratuito usando Google Sheets como banco de dados
+- **Acesso**: Todos que acessarem o link podem criar agendamentos
+- **Persistência**: Dados salvos em tempo real no Google Sheets
+- **Responsivo**: Funciona em desktop, tablet e celular
 
-### External Dependencies
+## Contato e Suporte
 
-**Third-Party Services**:
-- **Google Sheets API**: Primary data storage backend accessed via `@googleapis/sheets`
-- **Replit Connectors**: OAuth credential management for Google Sheets integration
-- **Neon Database**: PostgreSQL database provider (configured but not actively used)
+Para dúvidas ou sugestões sobre o sistema, consulte a documentação técnica ou entre em contato com o desenvolvedor.
 
-**Key NPM Packages**:
-- **@neondatabase/serverless**: PostgreSQL driver for Neon
-- **drizzle-orm** & **drizzle-kit**: Database ORM and migration tools
-- **@tanstack/react-query**: Server state management
-- **react-hook-form** & **@hookform/resolvers**: Form handling
-- **zod** & **drizzle-zod**: Runtime type validation
-- **date-fns**: Date manipulation utilities
-- **class-variance-authority** & **clsx**: Utility-first CSS class management
-- **Radix UI** component primitives (accordion, dialog, select, etc.)
+---
 
-**Development Tools**:
-- **Vite**: Build tool and dev server
-- **esbuild**: Production server bundling
-- **TypeScript**: Type safety across frontend and backend
-- **Tailwind CSS**: Utility-first styling framework
-- **PostCSS** with Autoprefixer: CSS processing
-
-**Google Fonts CDN**: Roboto font family loaded via Google Fonts for consistent typography.
+**Desenvolvido com ❤️ usando Replit Agent**
