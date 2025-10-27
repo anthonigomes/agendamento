@@ -1,10 +1,51 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertBookingSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 
+// Admin authentication middleware
+function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  if (req.session?.isAdmin) {
+    return next();
+  }
+  res.status(401).json({ message: "Acesso não autorizado" });
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Admin login endpoint
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { password } = req.body;
+      const adminPassword = process.env.ADMIN_PASSWORD;
+
+      if (!adminPassword) {
+        return res.status(500).json({ message: "Senha do administrador não configurada" });
+      }
+
+      if (password === adminPassword) {
+        req.session!.isAdmin = true;
+        res.json({ success: true });
+      } else {
+        res.status(401).json({ message: "Senha incorreta" });
+      }
+    } catch (error: any) {
+      console.error("Error during admin login:", error);
+      res.status(500).json({ message: "Erro ao fazer login" });
+    }
+  });
+
+  // Admin logout endpoint
+  app.post("/api/admin/logout", (req, res) => {
+    req.session!.isAdmin = false;
+    res.json({ success: true });
+  });
+
+  // Check admin status endpoint
+  app.get("/api/admin/status", (req, res) => {
+    res.json({ isAdmin: !!req.session?.isAdmin });
+  });
+
   app.post("/api/bookings", async (req, res) => {
     try {
       const validatedData = insertBookingSchema.parse(req.body);
@@ -80,7 +121,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/bookings/:id", async (req, res) => {
+  app.patch("/api/bookings/:id", requireAdmin, async (req, res) => {
     try {
       const { id } = req.params;
       const validatedData = insertBookingSchema.parse(req.body);
@@ -149,7 +190,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/bookings/:id", async (req, res) => {
+  app.delete("/api/bookings/:id", requireAdmin, async (req, res) => {
     try {
       const { id } = req.params;
       const deleted = await storage.deleteBooking(id);
