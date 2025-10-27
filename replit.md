@@ -28,11 +28,14 @@ Sistema web completo para agendamento do laboratório de informática escolar, c
 
 1. **Criar um Agendamento**:
    - Clique no botão "Novo Agendamento"
-   - Preencha seu nome e a disciplina
+   - Preencha seu nome, email e telefone
+   - Selecione a disciplina (dropdown com 9 opções)
    - Selecione o turno desejado (Manhã/Tarde/Noite)
    - Escolha o dia da semana
    - Selecione o horário de início
    - Indique se utilizará 1 ou 2 aulas
+   - Descreva o objetivo da aula
+   - Marque os recursos necessários (Internet, Projetor, Computadores, etc.)
    - Adicione observações se necessário
    - Clique em "Criar Agendamento"
 
@@ -51,7 +54,7 @@ Sistema web completo para agendamento do laboratório de informática escolar, c
 
 - **Planilha do Google Sheets**: Na primeira execução, o sistema cria automaticamente uma planilha chamada "Agendamentos - Laboratório de Informática" na conta Google conectada
 - **Acesso aos Dados**: Todos os agendamentos são salvos em tempo real na planilha
-- **Organização**: Dados incluem professor, disciplina, turno, dia, horário, duração e observações
+- **Organização**: Planilha com 13 colunas incluindo informações de contato, objetivo da aula e recursos necessários
 
 ## Estrutura Técnica
 
@@ -68,13 +71,18 @@ Sistema web completo para agendamento do laboratório de informática escolar, c
 - Armazenamento em Google Sheets
 
 ### Dados Armazenados
-Cada agendamento contém:
+Cada agendamento contém (13 colunas no Google Sheets):
+- ID único
 - Nome do Professor
-- Disciplina
+- Email do Professor (validado)
+- Telefone do Professor (formato brasileiro)
+- Disciplina (9 opções: Matemática, Português, Ciências, História, Geografia, Arte, Inglês, Ed. Física, Ens. Religioso)
 - Turno (manhã/tarde/noite)
 - Dia da Semana (segunda a sexta)
 - Horário de Início
 - Duração (1 ou 2 aulas)
+- Objetivo da Aula (obrigatório)
+- Recursos Necessários (Internet, Projetor, Computadores, Livros, Tablets, Outros)
 - Observações (opcional)
 - Data de Criação
 
@@ -101,8 +109,13 @@ O sistema previne conflitos automaticamente:
    - Turno Noite: 18:50, 19:40, 20:45, 21:35
 7. ✅ **9 Disciplinas do Ensino Fundamental 2** (dropdown): Matemática, Português, Ciências, História, Geografia, Arte, Inglês, Ed. Física, Ens. Religioso
 8. ✅ **Visualização corrigida**: Agendamentos de 2 aulas agora ocupam visualmente ambos os horários na grade
+9. ✅ **Campos de contato do professor**: Email (validado) e telefone (formato brasileiro)
+10. ✅ **Objetivo da aula**: Campo obrigatório para descrever o propósito pedagógico
+11. ✅ **Recursos necessários**: Seleção de equipamentos (Internet, Projetor, Computadores, Livros, Tablets, Outros)
+12. ✅ **Cards aprimorados**: Exibem objetivo com ícone de alvo e recursos com badges e ícones apropriados
+13. ✅ **Google Sheets ampliado**: Agora persiste 13 colunas de dados por agendamento
 
-**Status**: Sistema completo, testado e ajustado com os horários exatos da escola! Pronto para uso pelos professores! 🎓
+**Status**: Sistema completo com coleta abrangente de informações! Pronto para uso pelos professores com todos os detalhes necessários! 🎓📚
 
 ## Próximos Passos Sugeridos
 
