@@ -49,15 +49,16 @@ export default function Home() {
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-primary-foreground" data-testid="icon-logo">
-                <BookOpen className="h-6 w-6" />
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-primary-foreground flex-shrink-0" data-testid="icon-logo">
+                <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
-              <div>
-                <h1 className="text-lg font-medium leading-none" data-testid="text-app-title">
-                  Laboratório de Informática
+              <div className="min-w-0">
+                <h1 className="text-sm sm:text-base lg:text-lg font-medium leading-none truncate" data-testid="text-app-title">
+                  <span className="hidden sm:inline">Laboratório de Informática</span>
+                  <span className="sm:hidden">Lab Info</span>
                 </h1>
-                <p className="text-sm text-muted-foreground" data-testid="text-app-subtitle">
+                <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block" data-testid="text-app-subtitle">
                   Sistema de Agendamento
                 </p>
               </div>
@@ -68,18 +69,21 @@ export default function Home() {
                   variant="outline"
                   size="default"
                   data-testid="button-admin"
+                  className="flex items-center"
                 >
-                  <Settings className="mr-2 h-4 w-4" />
-                  Admin
+                  <Settings className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Admin</span>
                 </Button>
               </Link>
               <Button
                 onClick={() => setShowForm(!showForm)}
                 size="default"
                 data-testid="button-new-booking"
+                className="flex items-center"
               >
-                <Plus className="mr-2 h-4 w-4" />
-                Novo Agendamento
+                <Plus className="h-4 w-4 md:mr-2" />
+                <span className="hidden sm:inline">Novo Agendamento</span>
+                <span className="sm:hidden">Novo</span>
               </Button>
             </div>
           </div>
