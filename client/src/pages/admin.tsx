@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { useLocation } from "wouter";
 import type { Booking } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,7 +25,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Pencil, Trash2, Calendar, Users, BookOpen, Clock, Target, Wifi, Projector, Book, Tablet, MoreHorizontal, User as UserIcon, ArrowLeft } from "lucide-react";
+import { Pencil, Trash2, Calendar, Users, BookOpen, Clock, Target, Wifi, Projector, Book, Tablet, MoreHorizontal, User as UserIcon, ArrowLeft, LogOut } from "lucide-react";
 import { Link } from "wouter";
 import { EditBookingDialog } from "@/components/edit-booking-dialog";
 
@@ -62,13 +63,50 @@ const resourceLabels: Record<string, string> = {
 
 export default function AdminPage() {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bookingToDelete, setBookingToDelete] = useState<string | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [bookingToEdit, setBookingToEdit] = useState<Booking | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Check if user is authenticated as admin
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/admin/status");
+        const data = await response.json();
+        
+        if (!data.isAdmin) {
+          setLocation("/admin/login");
+        }
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+        setLocation("/admin/login");
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    checkAuth();
+  }, [setLocation]);
 
   const { data: bookings = [], isLoading } = useQuery<Booking[]>({
     queryKey: ["/api/bookings"],
+    enabled: !isCheckingAuth,
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("POST", "/api/admin/logout");
+    },
+    onSuccess: () => {
+      toast({
+        title: "Logout realizado",
+        description: "Você foi desconectado com sucesso.",
+      });
+      setLocation("/admin/login");
+    },
   });
 
   const deleteBookingMutation = useMutation({
@@ -132,6 +170,16 @@ export default function AdminPage() {
     .sort(([, a], [, b]) => b - a)
     .slice(0, 5);
 
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" data-testid="loading-auth">
+        <div className="text-center">
+          <div className="text-lg">Verificando autenticação...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6" data-testid="admin-page">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -141,12 +189,24 @@ export default function AdminPage() {
             Gerencie todos os agendamentos
           </p>
         </div>
-        <Link href="/">
-          <Button variant="outline" data-testid="button-back-home" className="w-full sm:w-auto">
-            <ArrowLeft className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Voltar</span>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => logoutMutation.mutate()}
+            disabled={logoutMutation.isPending}
+            data-testid="button-logout"
+            className="w-full sm:w-auto"
+          >
+            <LogOut className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Sair</span>
           </Button>
-        </Link>
+          <Link href="/">
+            <Button variant="outline" data-testid="button-back-home" className="w-full sm:w-auto">
+              <ArrowLeft className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Voltar</span>
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Statistics Cards */}
