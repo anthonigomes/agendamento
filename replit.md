@@ -148,6 +148,12 @@ O sistema previne conflitos automaticamente:
 
 **Status**: Sistema completo com gerenciamento administrativo integrado! Professores podem criar agendamentos e administradores podem gerenciar tudo através da página /admin! 🎓📚✨
 
+**Melhorias de UX - 27 Out 2025**:
+15. ✅ **Destaque Visual Aprimorado**: Agendamentos na grade com `bg-primary/10` (antes /5) para melhor escaneabilidade visual
+16. ✅ **Botões Destrutivos**: Botões de exclusão agora usam `variant="destructive"` (vermelho) em vez de outline, sinalizando claramente ação perigosa
+17. ✅ **Rodapé com Crédito**: Footer em todas as páginas com "Sistema desenvolvido pelo Prof. Antonio Gomes"
+18. ✅ **Validação de Acessibilidade**: Confirmado contraste WCAG 6.5:1, cores apropriadas para ambiente escolar
+
 ## Próximos Passos Sugeridos
 
 ### Melhorias Futuras
