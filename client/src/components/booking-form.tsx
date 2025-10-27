@@ -46,9 +46,21 @@ const shifts = [
 
 const timeSlots = {
   manha: ["07:30", "08:20", "09:10", "10:00"],
-  tarde: ["13:00", "13:50", "14:40", "15:30"],
-  noite: ["18:00", "18:50", "19:40", "20:30"],
+  tarde: ["13:00", "14:00", "15:15", "16:15"],
+  noite: ["18:50", "19:40", "20:45", "21:35"],
 };
+
+const subjects = [
+  "Matemática",
+  "Português",
+  "Ciências",
+  "História",
+  "Geografia",
+  "Arte",
+  "Inglês",
+  "Ed. Física",
+  "Ens. Religioso",
+];
 
 export function BookingForm({ onSuccess }: BookingFormProps) {
   const { toast } = useToast();
@@ -122,13 +134,24 @@ export function BookingForm({ onSuccess }: BookingFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Disciplina</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Ex: Matemática, Português..."
-                    {...field}
-                    data-testid="input-subject"
-                  />
-                </FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  data-testid="select-subject"
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione a disciplina" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {subjects.map((subject) => (
+                      <SelectItem key={subject} value={subject}>
+                        {subject}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
