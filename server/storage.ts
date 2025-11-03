@@ -22,7 +22,7 @@ export class GoogleSheetsStorage implements IStorage {
 
   constructor() {
     this.users = new Map();
-    this.spreadsheetId = process.env[SPREADSHEET_ID_KEY] || null;
+    this.spreadsheetId = process.env[SPREADSHEET_ID_KEY]?.trim() || null;
   }
 
   async getUser(id: string): Promise<User | undefined> {
@@ -120,7 +120,7 @@ export class GoogleSheetsStorage implements IStorage {
           booking.objective,
           booking.resources.join(', '),
           booking.notes || '',
-          booking.createdAt.toISOString(),
+          booking.createdAt?.toISOString() || new Date().toISOString(),
         ]]
       }
     });
@@ -213,7 +213,7 @@ export class GoogleSheetsStorage implements IStorage {
             booking.objective,
             booking.resources.join(', '),
             booking.notes || '',
-            booking.createdAt.toISOString(),
+            booking.createdAt?.toISOString() || new Date().toISOString(),
           ]]
         }
       });
