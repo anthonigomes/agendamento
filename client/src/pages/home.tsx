@@ -11,6 +11,7 @@ import { BookingForm } from "@/components/booking-form";
 import { WeeklySchedule } from "@/components/weekly-schedule";
 import { BookingCard } from "@/components/booking-card";
 import type { Booking } from "@shared/schema";
+import { isBookingInCurrentWeek, getWeekStart, getWeekEnd, formatDateToString } from "@/lib/utils";
 
 type Shift = "manha" | "tarde" | "noite";
 
@@ -24,16 +25,20 @@ export default function Home() {
   const [selectedShift, setSelectedShift] = useState<Shift>("manha");
   const [showForm, setShowForm] = useState(false);
 
-  const { data: bookings, isLoading } = useQuery<Booking[]>({
+  const { data: allBookings, isLoading } = useQuery<Booking[]>({
     queryKey: ["/api/bookings"],
   });
 
-  // Todos os agendamentos são mostrados (grade semanal completa)
-  const filteredBookings = bookings?.filter(
+  // Filtrar apenas agendamentos da semana atual (segunda a sexta)
+  const weekBookings = allBookings?.filter((booking) => 
+    isBookingInCurrentWeek(booking.weekStartDate)
+  );
+
+  const filteredBookings = weekBookings?.filter(
     (booking) => booking.shift === selectedShift
   );
 
-  const todayBookings = bookings?.filter((booking) => {
+  const todayBookings = weekBookings?.filter((booking) => {
     const today = new Date().getDay();
     const dayMap: Record<number, string> = {
       1: "segunda",
@@ -44,6 +49,9 @@ export default function Home() {
     };
     return booking.dayOfWeek === dayMap[today];
   });
+  
+  const weekStart = getWeekStart();
+  const weekEnd = getWeekEnd();
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,9 +118,12 @@ export default function Home() {
 
             <div>
               <div className="mb-6">
-                <h2 className="text-2xl font-medium mb-2" data-testid="text-schedule-title">Agenda Semanal</h2>
-                <p className="text-muted-foreground" data-testid="text-schedule-description">
-                  Visualize e gerencie os horários disponíveis
+                <div className="flex items-center gap-3 mb-2">
+                  <h2 className="text-2xl font-medium" data-testid="text-schedule-title">Agenda Semanal</h2>
+                  <Badge variant="secondary" className="text-xs">Semana Atual</Badge>
+                </div>
+                <p className="text-muted-foreground text-sm" data-testid="text-schedule-description">
+                  Agendamentos de {weekStart.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} a {weekEnd.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • Renovado toda segunda-feira
                 </p>
               </div>
 
@@ -136,7 +147,7 @@ export default function Home() {
                   <TabsContent key={shift} value={shift} className="mt-0">
                     <WeeklySchedule
                       shift={shift as Shift}
-                      bookings={bookings || []}
+                      bookings={weekBookings || []}
                       isLoading={isLoading}
                     />
                   </TabsContent>
@@ -156,10 +167,10 @@ export default function Home() {
               <CardContent className="space-y-4">
                 <div>
                   <div className="text-2xl font-medium" data-testid="text-total-bookings">
-                    {bookings?.length || 0}
+                    {weekBookings?.length || 0}
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Total de agendamentos
+                    Nesta semana
                   </p>
                 </div>
                 <div>
@@ -167,7 +178,7 @@ export default function Home() {
                     {todayBookings?.length || 0}
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Agendamentos hoje
+                    Hoje
                   </p>
                 </div>
               </CardContent>

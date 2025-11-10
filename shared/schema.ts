@@ -17,6 +17,7 @@ export const bookings = pgTable("bookings", {
   objective: text("objective").notNull(), // Objetivo da aula
   resources: text("resources").array().notNull(), // Recursos: Internet, Projetor, Livro, etc
   notes: text("notes"),
+  weekStartDate: text("week_start_date").notNull(), // Data da segunda-feira da semana (formato: "2025-11-10")
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -41,6 +42,7 @@ export const insertBookingSchema = createInsertSchema(bookings).omit({
   objective: z.string().min(1, "Objetivo da aula é obrigatório"),
   resources: z.array(z.string()).min(1, "Selecione pelo menos um recurso"),
   notes: z.string().optional(),
+  weekStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data da semana inválida"),
 });
 
 export type InsertBooking = z.infer<typeof insertBookingSchema>;

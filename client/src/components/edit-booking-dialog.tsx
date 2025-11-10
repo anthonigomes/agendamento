@@ -32,6 +32,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { getNextWeeks } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 
@@ -84,6 +85,19 @@ const resources = [
 
 export function EditBookingDialog({ booking, open, onOpenChange }: EditBookingDialogProps) {
   const { toast } = useToast();
+  
+  // Get next 4 weeks
+  const nextWeeks = getNextWeeks(4);
+  
+  // Ensure the current booking's week is included in the list
+  const bookingWeekExists = nextWeeks.some(w => w.startDate === booking.weekStartDate);
+  const availableWeeks = bookingWeekExists 
+    ? nextWeeks 
+    : [
+        // Add the booking's week first if it's not in the next 4 weeks
+        { startDate: booking.weekStartDate, label: `Semana do agendamento (${booking.weekStartDate})` },
+        ...nextWeeks
+      ];
 
   const form = useForm<InsertBooking>({
     resolver: zodResolver(insertBookingSchema),
@@ -99,6 +113,7 @@ export function EditBookingDialog({ booking, open, onOpenChange }: EditBookingDi
       objective: booking.objective,
       resources: booking.resources,
       notes: booking.notes || "",
+      weekStartDate: booking.weekStartDate,
     },
   });
 
@@ -116,6 +131,7 @@ export function EditBookingDialog({ booking, open, onOpenChange }: EditBookingDi
       objective: booking.objective,
       resources: booking.resources,
       notes: booking.notes || "",
+      weekStartDate: booking.weekStartDate,
     });
   }, [booking, form]);
 
@@ -246,6 +262,38 @@ export function EditBookingDialog({ booking, open, onOpenChange }: EditBookingDi
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="weekStartDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Semana do Agendamento</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    data-testid="select-edit-week"
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a semana" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {availableWeeks.map((week) => (
+                        <SelectItem key={week.startDate} value={week.startDate}>
+                          {week.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    A semana começa na segunda e termina na sexta
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="grid gap-6 sm:grid-cols-2">
               <FormField

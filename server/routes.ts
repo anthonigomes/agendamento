@@ -62,7 +62,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const newEndMinutes = newStartMinutes + (newDuration * 50);
       
       const conflict = allBookings.find((b) => {
-        if (b.shift !== validatedData.shift || b.dayOfWeek !== validatedData.dayOfWeek) {
+        // Conflito só ocorre se for mesma semana, mesmo turno e mesmo dia
+        if (b.weekStartDate !== validatedData.weekStartDate || 
+            b.shift !== validatedData.shift || 
+            b.dayOfWeek !== validatedData.dayOfWeek) {
           return false;
         }
         
@@ -144,7 +147,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return false;
         }
         
-        if (b.shift !== validatedData.shift || b.dayOfWeek !== validatedData.dayOfWeek) {
+        // Conflito só ocorre se for mesma semana, mesmo turno e mesmo dia
+        if (b.weekStartDate !== validatedData.weekStartDate ||
+            b.shift !== validatedData.shift || 
+            b.dayOfWeek !== validatedData.dayOfWeek) {
           return false;
         }
         

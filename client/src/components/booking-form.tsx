@@ -25,6 +25,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { getNextWeeks, formatDateToString, getWeekStart } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
 interface BookingFormProps {
@@ -74,6 +75,7 @@ const resources = [
 
 export function BookingForm({ onSuccess }: BookingFormProps) {
   const { toast } = useToast();
+  const availableWeeks = getNextWeeks(4);
   
   const form = useForm<InsertBooking>({
     resolver: zodResolver(insertBookingSchema),
@@ -89,6 +91,7 @@ export function BookingForm({ onSuccess }: BookingFormProps) {
       objective: "",
       resources: [],
       notes: "",
+      weekStartDate: formatDateToString(getWeekStart()),
     },
   });
 
@@ -171,6 +174,38 @@ export function BookingForm({ onSuccess }: BookingFormProps) {
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="weekStartDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Semana</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+                data-testid="select-week"
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione a semana" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {availableWeeks.map((week) => (
+                    <SelectItem key={week.startDate} value={week.startDate}>
+                      {week.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormDescription>
+                Selecione a semana (segunda a sexta) para o agendamento
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <div className="grid gap-6 sm:grid-cols-2">
           <FormField
