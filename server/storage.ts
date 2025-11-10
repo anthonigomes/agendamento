@@ -73,6 +73,7 @@ export class GoogleSheetsStorage implements IStorage {
                 { userEnteredValue: { stringValue: 'Objetivo da Aula' } },
                 { userEnteredValue: { stringValue: 'Recursos' } },
                 { userEnteredValue: { stringValue: 'Observações' } },
+                { userEnteredValue: { stringValue: 'Semana (Segunda)' } },
                 { userEnteredValue: { stringValue: 'Data de Criação' } },
               ]
             }]
@@ -104,7 +105,7 @@ export class GoogleSheetsStorage implements IStorage {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: 'Agendamentos!A:M',
+      range: 'Agendamentos!A:N',
       valueInputOption: 'RAW',
       requestBody: {
         values: [[
@@ -120,6 +121,7 @@ export class GoogleSheetsStorage implements IStorage {
           booking.objective,
           booking.resources.join(', '),
           booking.notes || '',
+          booking.weekStartDate,
           booking.createdAt?.toISOString() || new Date().toISOString(),
         ]]
       }
@@ -135,7 +137,7 @@ export class GoogleSheetsStorage implements IStorage {
       
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Agendamentos!A2:M',
+        range: 'Agendamentos!A2:N',
       });
 
       const rows = response.data.values || [];
@@ -153,7 +155,8 @@ export class GoogleSheetsStorage implements IStorage {
         objective: row[9],
         resources: row[10] ? row[10].split(', ') : [],
         notes: row[11] || null,
-        createdAt: row[12] ? new Date(row[12]) : null,
+        weekStartDate: row[12] || '',
+        createdAt: row[13] ? new Date(row[13]) : null,
       }));
     } catch (error) {
       console.error('Error fetching bookings:', error);
@@ -174,7 +177,7 @@ export class GoogleSheetsStorage implements IStorage {
       // Get all rows to find the one to update
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Agendamentos!A2:M',
+        range: 'Agendamentos!A2:N',
       });
 
       const rows = response.data.values || [];
@@ -190,14 +193,14 @@ export class GoogleSheetsStorage implements IStorage {
       const booking: Booking = {
         ...insertBooking,
         id,
-        createdAt: rows[rowIndex][12] ? new Date(rows[rowIndex][12]) : new Date(),
+        createdAt: rows[rowIndex][13] ? new Date(rows[rowIndex][13]) : new Date(),
         notes: insertBooking.notes || null,
       };
 
       // Update the row
       await sheets.spreadsheets.values.update({
         spreadsheetId,
-        range: `Agendamentos!A${sheetRowNumber}:M${sheetRowNumber}`,
+        range: `Agendamentos!A${sheetRowNumber}:N${sheetRowNumber}`,
         valueInputOption: 'RAW',
         requestBody: {
           values: [[
@@ -213,6 +216,7 @@ export class GoogleSheetsStorage implements IStorage {
             booking.objective,
             booking.resources.join(', '),
             booking.notes || '',
+            booking.weekStartDate,
             booking.createdAt?.toISOString() || new Date().toISOString(),
           ]]
         }
@@ -233,7 +237,7 @@ export class GoogleSheetsStorage implements IStorage {
       // Get all rows to find the one to delete
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Agendamentos!A2:M',
+        range: 'Agendamentos!A2:N',
       });
 
       const rows = response.data.values || [];
