@@ -159,6 +159,12 @@ O sistema previne conflitos automaticamente:
 17. ✅ **Rodapé com Crédito**: Footer em todas as páginas com "Sistema desenvolvido pelo Prof. Antonio Gomes"
 18. ✅ **Validação de Acessibilidade**: Confirmado contraste WCAG 6.5:1, cores apropriadas para ambiente escolar
 
+**Suporte WhatsApp - 10 Nov 2025**:
+25. ✅ **WhatsApp Integrado**: Link clicável no rodapé para suporte via WhatsApp (82) 99669-7956
+26. ✅ **Ícone Profissional**: Ícone verde do WhatsApp com hover effect
+27. ✅ **Mensagem de Orientação**: Aviso "Sempre pré-agende seu horário no laboratório"
+28. ✅ **Responsivo**: Footer adaptado para mobile, tablet e desktop
+
 **Sistema de Autenticação - 27 Out 2025**:
 19. ✅ **Login Administrativo**: Página /admin/login com autenticação por senha
 20. ✅ **Proteção de Rotas**: Middleware `requireAdmin` protege edição e exclusão de agendamentos
