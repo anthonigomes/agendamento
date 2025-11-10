@@ -28,6 +28,7 @@ export default function Home() {
     queryKey: ["/api/bookings"],
   });
 
+  // Todos os agendamentos são mostrados (grade semanal completa)
   const filteredBookings = bookings?.filter(
     (booking) => booking.shift === selectedShift
   );
@@ -158,7 +159,7 @@ export default function Home() {
                     {bookings?.length || 0}
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Agendamentos totais
+                    Total de agendamentos
                   </p>
                 </div>
                 <div>

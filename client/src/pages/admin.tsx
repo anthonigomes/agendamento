@@ -5,6 +5,7 @@ import { useLocation } from "wouter";
 import type { Booking } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { isCurrentMonth, getMonthStart, getMonthEnd } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -25,7 +26,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Pencil, Trash2, Calendar, Users, BookOpen, Clock, Target, Wifi, Projector, Book, Tablet, MoreHorizontal, User as UserIcon, ArrowLeft, LogOut } from "lucide-react";
+import { Pencil, Trash2, Calendar, Users, BookOpen, Clock, Target, Wifi, Projector, Book, Tablet, MoreHorizontal, User as UserIcon, ArrowLeft, LogOut, Crown, Trophy } from "lucide-react";
 import { Link } from "wouter";
 import { EditBookingDialog } from "@/components/edit-booking-dialog";
 
@@ -147,16 +148,22 @@ export default function AdminPage() {
     }
   };
 
-  // Statistics
+  // Statistics - Filtrar por mês atual
+  const monthBookings = bookings.filter(booking => isCurrentMonth(booking.createdAt));
+  
   const totalBookings = bookings.length;
-  const bookingsByProfessor = bookings.reduce((acc, booking) => {
+  const totalMonth = monthBookings.length;
+  
+  const bookingsByProfessor = monthBookings.reduce((acc, booking) => {
     acc[booking.professorName] = (acc[booking.professorName] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
-  const bookingsBySubject = bookings.reduce((acc, booking) => {
+  
+  const bookingsBySubject = monthBookings.reduce((acc, booking) => {
     acc[booking.subject] = (acc[booking.subject] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
+  
   const bookingsByShift = bookings.reduce((acc, booking) => {
     acc[booking.shift] = (acc[booking.shift] || 0) + 1;
     return acc;
@@ -169,6 +176,8 @@ export default function AdminPage() {
   const topSubjects = Object.entries(bookingsBySubject)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 5);
+    
+  const currentMonthName = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 
   if (isCheckingAuth) {
     return (
@@ -212,63 +221,74 @@ export default function AdminPage() {
       {/* Statistics Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card data-testid="card-total-bookings">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Histórico</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold" data-testid="stat-total">{totalBookings}</div>
+            <p className="text-xs text-muted-foreground mt-1">Todos os tempos</p>
           </CardContent>
         </Card>
 
-        <Card data-testid="card-shift-stats">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Por Turno</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+        <Card data-testid="card-month-stats" className="bg-primary/5">
+          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Mês Atual</CardTitle>
+            <Calendar className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="space-y-1">
-              {Object.entries(bookingsByShift).map(([shift, count]) => (
-                <div key={shift} className="flex justify-between text-sm" data-testid={`stat-shift-${shift}`}>
-                  <span className="text-muted-foreground">{shiftLabels[shift]}:</span>
-                  <span className="font-medium">{count}</span>
-                </div>
-              ))}
-            </div>
+            <div className="text-2xl font-bold text-primary" data-testid="stat-month">{totalMonth}</div>
+            <p className="text-xs text-muted-foreground mt-1 capitalize">{currentMonthName}</p>
           </CardContent>
         </Card>
 
         <Card data-testid="card-professors">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Top Professores</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-1.5">
+              Top do Mês
+              <Trophy className="h-3.5 w-3.5 text-amber-500" />
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="space-y-1">
-              {topProfessors.slice(0, 3).map(([name, count]) => (
-                <div key={name} className="flex justify-between text-sm" data-testid={`stat-professor-${name}`}>
-                  <span className="text-muted-foreground truncate max-w-[150px]">{name}</span>
-                  <span className="font-medium">{count}</span>
-                </div>
-              ))}
-            </div>
+            {topProfessors.length > 0 ? (
+              <div className="space-y-1">
+                {topProfessors.slice(0, 3).map(([name, count], index) => (
+                  <div key={name} className="flex items-center justify-between gap-2 text-sm" data-testid={`stat-professor-${name}`}>
+                    <div className="flex items-center gap-1.5 truncate max-w-[120px]">
+                      {index === 0 && <Crown className="h-3 w-3 text-amber-500 flex-shrink-0" />}
+                      <span className={index === 0 ? 'font-medium' : 'text-muted-foreground'}>
+                        {name}
+                      </span>
+                    </div>
+                    <span className="font-medium">{count}x</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">Nenhum agendamento este mês</p>
+            )}
           </CardContent>
         </Card>
 
         <Card data-testid="card-subjects">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Top Disciplinas</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Disciplinas</CardTitle>
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="space-y-1">
-              {topSubjects.slice(0, 3).map(([subject, count]) => (
-                <div key={subject} className="flex justify-between text-sm" data-testid={`stat-subject-${subject}`}>
-                  <span className="text-muted-foreground truncate max-w-[150px]">{subject}</span>
-                  <span className="font-medium">{count}</span>
-                </div>
-              ))}
-            </div>
+            {topSubjects.length > 0 ? (
+              <div className="space-y-1">
+                {topSubjects.slice(0, 3).map(([subject, count]) => (
+                  <div key={subject} className="flex justify-between gap-2 text-sm" data-testid={`stat-subject-${subject}`}>
+                    <span className="text-muted-foreground truncate max-w-[120px]">{subject}</span>
+                    <span className="font-medium">{count}x</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">Nenhuma disciplina este mês</p>
+            )}
           </CardContent>
         </Card>
       </div>
