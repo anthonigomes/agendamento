@@ -7,11 +7,13 @@ Sistema web completo para agendamento do laboratório de informática escolar, c
 
 ### ✨ Funcionalidades
 - **Agendamento Intuitivo**: Formulário simples para criar reservas do laboratório
-- **Visualização Semanal**: Grade visual mostrando disponibilidade por dia e horário
+- **Sistema de Semanas Específicas**: Agendamentos vinculados a semanas específicas (segunda a sexta-feira)
+- **Renovação Automática**: Grade renovada toda segunda-feira com a semana atual
+- **Visualização Semanal**: Grade visual mostrando disponibilidade por dia e horário da semana atual
 - **Três Turnos**: Manhã (7h-12h), Tarde (13h-18h), Noite (18h-22h)
-- **Prevenção de Conflitos**: Sistema automático que impede dupla reserva do mesmo horário
+- **Prevenção de Conflitos**: Sistema automático que impede dupla reserva do mesmo horário na mesma semana
 - **Duração Flexível**: Escolha entre 1 ou 2 aulas simultâneas
-- **Estatísticas em Tempo Real**: Acompanhe total de agendamentos e reservas do dia
+- **Estatísticas em Tempo Real**: Acompanhe agendamentos da semana atual e do dia
 - **Integração Google Sheets**: Dados salvos automaticamente em planilha do Google
 
 ### 🎨 Design
@@ -30,8 +32,9 @@ Sistema web completo para agendamento do laboratório de informática escolar, c
    - Clique no botão "Novo Agendamento"
    - Preencha seu nome, email e telefone
    - Selecione a disciplina (dropdown com 9 opções)
+   - **Escolha a semana**: Selecione uma das próximas 4 semanas disponíveis
    - Selecione o turno desejado (Manhã/Tarde/Noite)
-   - Escolha o dia da semana
+   - Escolha o dia da semana (segunda a sexta)
    - Selecione o horário de início
    - Indique se utilizará 1 ou 2 aulas
    - Descreva o objetivo da aula
@@ -40,15 +43,19 @@ Sistema web completo para agendamento do laboratório de informática escolar, c
    - Clique em "Criar Agendamento"
 
 2. **Visualizar Agenda**:
+   - A página inicial mostra apenas a **semana atual** (segunda a sexta)
+   - Badge "Semana Atual" indica que está vendo agendamentos da semana corrente
+   - Indicador de datas mostra o período (ex: "10/11 a 14/11")
    - Use as abas (Manhã/Tarde/Noite) para alternar entre turnos
-   - A grade semanal mostra todos os horários disponíveis
+   - A grade semanal mostra todos os horários disponíveis da semana atual
    - Células verdes indicam horários ocupados
    - Células com borda tracejada estão disponíveis
 
 3. **Verificar Estatísticas**:
-   - Veja o total de agendamentos no painel lateral
-   - Confira quantos agendamentos existem para hoje
-   - Liste os agendamentos recentes do turno selecionado
+   - Veja o total de agendamentos **nesta semana** no painel lateral
+   - Confira quantos agendamentos existem **hoje**
+   - Liste os agendamentos recentes do turno selecionado (apenas da semana atual)
+   - Grade renovada automaticamente toda segunda-feira
 
 ### Para Administradores
 
@@ -63,10 +70,11 @@ Sistema web completo para agendamento do laboratório de informática escolar, c
    - **Top Disciplinas**: Disciplinas mais agendadas
 
 3. **Gerenciar Agendamentos**:
-   - **Visualizar Todos**: Tabela com todos os agendamentos do sistema
+   - **Visualizar Todos**: Tabela com todos os agendamentos do sistema (todas as semanas)
    - **Editar**: Clique no ícone de lápis para modificar qualquer agendamento
-     - Altere qualquer um dos 13 campos (professor, disciplina, turno, dia, horário, etc.)
-     - Sistema valida conflitos automaticamente
+     - Altere qualquer um dos 14 campos incluindo a semana do agendamento
+     - Pode mover agendamentos entre semanas diferentes
+     - Sistema valida conflitos automaticamente dentro da mesma semana
    - **Excluir**: Clique no ícone de lixeira para deletar um agendamento
      - Confirmação obrigatória antes da exclusão
    - **Voltar**: Botão "Voltar" retorna à página principal
@@ -74,7 +82,8 @@ Sistema web completo para agendamento do laboratório de informática escolar, c
 4. **Planilha do Google Sheets**:
    - Na primeira execução, o sistema cria automaticamente uma planilha chamada "Agendamentos - Laboratório de Informática"
    - Todos os agendamentos são salvos em tempo real na planilha
-   - Planilha com 13 colunas incluindo informações de contato, objetivo da aula e recursos necessários
+   - Planilha com **14 colunas** incluindo semana, informações de contato, objetivo da aula e recursos necessários
+   - Coluna "Semana (Segunda)" armazena a data da segunda-feira da semana do agendamento
    - Edições e exclusões são refletidas instantaneamente no Google Sheets
 
 **Nota sobre Segurança - ATUALIZADO**: O painel administrativo agora possui **autenticação com senha**! 
@@ -99,7 +108,7 @@ Sistema web completo para agendamento do laboratório de informática escolar, c
 - Armazenamento em Google Sheets
 
 ### Dados Armazenados
-Cada agendamento contém (13 colunas no Google Sheets):
+Cada agendamento contém (14 colunas no Google Sheets):
 - ID único
 - Nome do Professor
 - Email do Professor (validado)
@@ -112,15 +121,19 @@ Cada agendamento contém (13 colunas no Google Sheets):
 - Objetivo da Aula (obrigatório)
 - Recursos Necessários (Internet, Projetor, Computadores, Livros, Tablets, Outros)
 - Observações (opcional)
+- **Semana (Segunda)**: Data da segunda-feira da semana (formato YYYY-MM-DD)
 - Data de Criação
 
 ## Validações de Conflito
 
-O sistema previne conflitos automaticamente:
-- ✅ Detecta se um horário já está ocupado
+O sistema previne conflitos automaticamente **dentro da mesma semana**:
+- ✅ Detecta se um horário já está ocupado na mesma semana
 - ✅ Considera duração de 2 aulas (~100 minutos)
 - ✅ Verifica sobreposição de horários
+- ✅ **Permite mesmo horário em semanas diferentes** (não há conflito entre semanas)
 - ✅ Mostra mensagem de erro clara ao usuário
+
+**Exemplo**: Pode agendar segunda-feira 07:30 para a semana de 10/11 E para a semana de 17/11 sem conflito!
 
 ## Desenvolvimento Recente
 
@@ -151,7 +164,7 @@ O sistema previne conflitos automaticamente:
    - Validação de conflitos ao editar
    - 100% gratuito (sem sistema de login/autenticação)
 
-**Status**: Sistema completo com gerenciamento administrativo integrado! Professores podem criar agendamentos e administradores podem gerenciar tudo através da página /admin! 🎓📚✨
+**Status Atual - 14 Nov 2025**: Sistema completo com **agendamentos por semana específica**! Grade semanal renovada automaticamente toda segunda-feira mostrando apenas agendamentos da semana atual. Professores podem agendar as próximas 4 semanas, e administradores têm controle total incluindo movimentação de agendamentos entre semanas! 🎓📚✨
 
 **Melhorias de UX - 27 Out 2025**:
 15. ✅ **Destaque Visual Aprimorado**: Agendamentos na grade com `bg-primary/10` (antes /5) para melhor escaneabilidade visual
@@ -181,6 +194,20 @@ O sistema previne conflitos automaticamente:
 33. ✅ **Top Disciplinas**: Ranking das 3 disciplinas mais agendadas no mês
 34. ✅ **Sem Emojis**: Ícones profissionais do lucide-react (Crown, Trophy) respeitando design guidelines
 35. ✅ **Histórico Preservado**: Todos os dados mantidos no Google Sheets para análise temporal
+
+**Sistema de Semanas Específicas - 14 Nov 2025** (NOVO!):
+36. ✅ **Campo weekStartDate**: Cada agendamento vinculado a uma semana específica (segunda-feira)
+37. ✅ **Seleção de Semana**: Dropdown mostrando próximas 4 semanas disponíveis (formato DD/MM a DD/MM)
+38. ✅ **Validação de Conflitos Aprimorada**: Conflitos verificados apenas dentro da mesma semana
+39. ✅ **Agendamentos Permitidos Entre Semanas**: Mesmo horário pode ser agendado em semanas diferentes
+40. ✅ **Google Sheets Expandido**: Agora com 14 colunas incluindo "Semana (Segunda)"
+41. ✅ **Filtro da Semana Atual**: Home page mostra apenas agendamentos da semana corrente
+42. ✅ **Badge "Semana Atual"**: Indicador visual claro da semana sendo visualizada
+43. ✅ **Indicador de Datas**: Mostra período da semana (ex: "10/11 a 14/11")
+44. ✅ **Estatísticas Semanais**: Contador "Nesta semana" substituindo total geral
+45. ✅ **Edit Dialog Atualizado**: Permite mover agendamentos entre semanas diferentes
+46. ✅ **Histórico Preservado**: Edit dialog inclui semana do agendamento mesmo se for passada
+47. ✅ **Testes E2E**: Validação completa do sistema de semanas com Playwright
 
 ## Próximos Passos Sugeridos
 
